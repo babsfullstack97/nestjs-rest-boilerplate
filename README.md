@@ -6,6 +6,14 @@
 
 # Basic documentation
 
+## Redis with Docker
+
+> Up an image and run Redis image with docker
+
+```sh
+docker run -d  -h redis -e REDIS_PASSWORD=redis -v redis-data:/data  -p 6379:6379  --name redis --restart always redis:5.0.5-alpine3.9 /bin/sh -c 'redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}'
+```
+
 ## Postgres with Docker
 
 > Up an image and run postgres image with docker
