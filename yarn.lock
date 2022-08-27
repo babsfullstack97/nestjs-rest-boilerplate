@@ -5010,10 +5010,10 @@ has@^1.0.1, has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-helmet@5.1.1:
-  version "5.1.1"
-  resolved "https://registry.npmjs.org/helmet/-/helmet-5.1.1.tgz"
-  integrity sha512-/yX0oVZBggA9cLJh8aw3PPCfedBnbd7J2aowjzsaWwZh7/UFY0nccn/aHAggIgWUFfnykX8GKd3a1pSbrmlcVQ==
+helmet@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.npmjs.org/helmet/-/helmet-6.0.0.tgz"
+  integrity sha512-FO9RpR1wNJepH/GbLPQVtkE2eESglXL641p7SdyoT4LngHFJcZheHMoyUcjCZF4qpuMMO1u5q6RK0l9Ux8JBcg==
 
 hexoid@1.0.0:
   version "1.0.0"
