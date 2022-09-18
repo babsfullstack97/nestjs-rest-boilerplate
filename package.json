@@ -6,6 +6,9 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
+        "preversion": "npm run lint",
+        "version": "npm run format && git add -A src",
+        "postversion": "git push && git push --tags",
         "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
         "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
         "schema:drop": "ts-node ./node_modules/typeorm/cli.js schema:drop",
