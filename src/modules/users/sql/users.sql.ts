@@ -1,6 +1,6 @@
-import { UserListSQLType } from './user.type';
+import { UserListSQLType } from '../types/users.type';
 
-export class UserSQL {
+export class UsersSql {
     public static readonly findUserList = (values: UserListSQLType): string => {
         return `
             SELECT u.avatar, u.name, u.email FROM "user" u

@@ -1,10 +1,12 @@
+import { configService } from '@config/application.config';
+
 export const REDIS_CACHE_TTL =
-    Number(process.env.REDIS_CACHE_TTL) || 60 * 60 * 24; // 1 day
+    Number(configService.getValue('REDIS_CACHE_TTL', false)) || 60 * 60 * 24; // 1 day
 
 export const REDIS_CONFIG = {
-    host: process.env.REDIS_HOST,
-    port: Number(process.env.REDIS_PORT),
-    password: process.env.REDIS_PASSWORD,
+    host: configService.getValue('REDIS_HOST'),
+    port: Number(configService.getValue('REDIS_PORT')),
+    password: configService.getValue('REDIS_PASSWORD'),
 };
 
 export const REDIS_CACHE_OPTIONS = {
@@ -15,3 +17,4 @@ export const REDIS_CACHE_OPTIONS = {
 };
 
 export const REDIS_URL = `redis://${REDIS_CONFIG.password}@${REDIS_CONFIG.host}:${REDIS_CONFIG.port}`;
+export type ClientOpts = typeof REDIS_CONFIG;

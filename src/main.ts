@@ -1,26 +1,37 @@
 #!/usr/bin/env node
 import 'reflect-metadata';
+import 'dotenv/config';
 
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
+
 import { NestFactory } from '@nestjs/core';
 
-import dotenv from 'dotenv';
-import helmet from 'helmet';
-import compression from 'compression';
+import type { INestApplication } from '@nestjs/common';
+
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
+
+import compression from 'compression';
 import morgan from 'morgan';
 
-import { PORT } from 'nest-shared/lib/shared/common/constants/global.constants';
+import type { Server } from 'node:http';
 
-import { AppModule } from './app.module';
-import { configService } from './infra/application/application.config';
+import gracefulShutdown from '@shared/events/gracefulShutdown';
+
+import { AppModule } from '@modules/app/app.module';
+import { ShutdownEnum } from '@shared/enums/ShutdownEnum';
+
+import { PORT } from '@shared/constants/global';
+import { configService } from '@config/application.config';
+
 import * as pkg from '../package.json';
-
-dotenv.config();
+import { StatusService } from '@modules/status/status.service';
+import { StatusEnum } from '@modules/status/status.enum';
 
 async function bootstrap(): Promise<void> {
     const app: INestApplication = await NestFactory.create(AppModule);
+    const logger: Logger = new Logger(bootstrap.name);
 
     app.useGlobalPipes(
         new ValidationPipe({
@@ -48,7 +59,25 @@ async function bootstrap(): Promise<void> {
         SwaggerModule.setup('docs', app, document);
     }
 
-    await app.listen(PORT);
+    const server: Server = await app.listen(PORT);
+    app.get(StatusService).Status = StatusEnum.online;
+    process.on('SIGINT', gracefulShutdown(server, 'SIGINT'));
+    process.on('SIGTERM', gracefulShutdown(server, 'SIGTERM'));
+    process.on('exit', (code) => {
+        logger.verbose(`Exit signal received. Code: ${code}`);
+    });
+    process.on(ShutdownEnum.uncaughtException, (error, origin) => {
+        logger.verbose(`\n${origin} signal received.\n${error}`);
+        app.get(StatusService).Status = StatusEnum.offline;
+    });
+    process.on(ShutdownEnum.unhandledRejection, (error, origin) => {
+        if (error) logger.error(JSON.stringify(error));
+        logger.error(`\n${origin} signal received.\n${error}`);
+        logger.error(
+            `\n${ShutdownEnum.unhandledRejection} signal received.\n${error}`,
+        );
+        app.get(StatusService).Status = StatusEnum.offline;
+    });
 }
 
 ((): void => {

@@ -7,37 +7,33 @@ import { Repository } from 'typeorm';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
-import { UserSQL } from './user.sql';
+import { UsersSql } from '../sql/users.sql';
 
-import { User } from './entities/user.entity';
+import { User } from '../entities/users.entity';
 
-import authConfig from '../../infra/auth/auth';
+import authConfig from '../../../infra/auth/auth';
 
-import type { UserListDataDto } from './dto/user-list-data';
-import type { UserSessionsDto } from './dto/user-sessions.dto';
-import type { CreateUserDto } from './dto/create-user.dto';
-import type { AuthResponseType, UserListType } from './user.type';
+import type { UserListDataDto } from '../dto/users-list-data';
+import type { UserSessionsDto } from '../dto/user-sessions.dto';
+import type { CreateUserDto } from '../dto/create-user.dto';
+import type { AuthResponseType } from '../types/users.type';
+import { UserInterface } from '@modules/users/interfaces/users.interface';
 
 @Injectable()
-export class UserService {
+export class UsersService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) {}
-    public async findUserList(dto: UserListDataDto): Promise<UserListType[]> {
+    public async findUserList(dto: UserListDataDto): Promise<User[]> {
         return await this.userRepository.query(
-            UserSQL.findUserList({
+            UsersSql.findUserList({
                 ...dto,
             }),
         );
     }
-    public async findAll(): Promise<User[]> {
-        return await this.userRepository.find();
-    }
-    public async findOne(id: string): Promise<User> {
-        return await this.userRepository.findOne(id);
-    }
-    public async create(createUserDto: CreateUserDto) {
+
+    public async create(createUserDto: CreateUserDto): Promise<UserInterface> {
         try {
             const passwordHash = await bcrypt.hash(createUserDto.password, 8);
             const user = this.userRepository.create({
@@ -48,6 +44,12 @@ export class UserService {
         } catch (error) {
             throw error;
         }
+    }
+    public async findAll(): Promise<UserInterface[]> {
+        return await this.userRepository.find();
+    }
+    public async findOne(id: string): Promise<UserInterface> {
+        return await this.userRepository.findOne(id);
     }
     public async auth(
         userSessionsDto: UserSessionsDto,
@@ -72,12 +74,12 @@ export class UserService {
                 return reject(new UnauthorizedException('Invalid password!'));
             }
 
-            const token = jwt.sign({ id: user.id }, authConfig.secret, {
+            const access_token = jwt.sign({ id: user.id }, authConfig.secret, {
                 expiresIn: authConfig.expiresIn,
             });
 
             return resolve({
-                token,
+                access_token,
                 user,
             });
         });

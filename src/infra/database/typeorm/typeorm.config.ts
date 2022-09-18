@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { ConfigService } from '../../application/application.config';
 import { TypeOrmModuleOptionsExtension } from 'nest-shared/lib/shared/common/interfaces/type-orm.interface';
+import ConfigService from '../../../config/application.config';
 
 export class TypeormConfig extends ConfigService {
     public getTypeOrmConfig(): TypeOrmModuleOptionsExtension {
@@ -43,5 +43,7 @@ const typeormConfig = new TypeormConfig(process.env).ensureValues([
     'POSTGRES_USER',
     'POSTGRES_PASSWORD',
     'POSTGRES_DATABASE',
+    'POSTGRES_LOGS',
+    'POSTGRES_SYNC',
 ]);
 export { typeormConfig };

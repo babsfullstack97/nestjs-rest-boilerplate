@@ -1,38 +1,46 @@
+import { Module } from '@nestjs/common';
+
 import {
-    Module,
     NestModule,
     MiddlewareConsumer,
     RequestMethod,
     CacheModule,
     CacheInterceptor,
 } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RolesMiddleware } from './infra/auth/roles.middleware';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
-import { UserModule } from './modules/user/user.module';
-import { typeormConfig } from './infra/database/typeorm/typeorm.config';
+
+import * as redisStore from 'cache-manager-redis-store';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
+import { UsersModule } from '@modules/users/users.module';
+import { StatusModule } from '@modules/status/status.module';
+
+import { AppController } from './app.controller';
+import { RolesMiddleware } from '@infra/auth/roles.middleware';
+
+import { REDIS_CACHE_OPTIONS } from '@infra/cache/redis/config.redis';
+import { THROTTLER_CONFIG } from '@config/throttler.config';
+import { typeormConfig } from '@infra/database/typeorm/typeorm.config';
+
+import type { ClientOpts } from '@infra/cache/redis/config.redis';
 
 @Module({
     imports: [
-        ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '..', 'public'),
-        }),
         TypeOrmModule.forRoot(typeormConfig.getTypeOrmConfig()),
-        CacheModule.register(),
-        ThrottlerModule.forRoot({
-            ttl: 60 * 60,
-            limit: 60,
+        CacheModule.register<ClientOpts>({
+            store: redisStore,
+            ...REDIS_CACHE_OPTIONS,
         }),
-        UserModule,
+        ThrottlerModule.forRoot({
+            ...THROTTLER_CONFIG,
+        }),
+        UsersModule,
+        StatusModule,
     ],
     controllers: [AppController],
     providers: [
-        AppService,
         {
             provide: APP_INTERCEPTOR,
             useClass: CacheInterceptor,

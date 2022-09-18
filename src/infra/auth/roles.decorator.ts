@@ -2,7 +2,7 @@ import { ForbiddenException } from '@nestjs/common';
 
 import type { Request } from 'express';
 
-import { APP_SECRET } from '../../shared/constants/global';
+import { APP_AUTH_SECRET } from '../../shared/constants/global';
 
 export const ValidateApiKey = (args: Request): void => {
     const api_key_index = args.rawHeaders.indexOf(
@@ -14,7 +14,7 @@ export const ValidateApiKey = (args: Request): void => {
     if (!api_key) {
         throw new ForbiddenException('No Token on request');
     }
-    if (api_key !== APP_SECRET) {
+    if (api_key !== APP_AUTH_SECRET) {
         throw new ForbiddenException('Incorrect token');
     }
 };

@@ -3,13 +3,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CacheModule } from '@nestjs/common';
 
-import { UserService } from './user.service';
-import UserServiceMock from '../../../test/mock/User/user';
+import { UsersService } from '../services/users.service';
+import { UserServiceMock } from './mock/users.service.mock';
 
-import { User } from './entities/user.entity';
+import { User } from '../entities/users.entity';
 
 describe('UserService', () => {
-    let service: UserService;
+    let service: UsersService;
 
     const mockUserRepository = {
         query: jest.fn(),
@@ -20,10 +20,9 @@ describe('UserService', () => {
             imports: [CacheModule.register({})],
             providers: [
                 {
-                    provide: UserService,
+                    provide: UsersService,
                     useClass: UserServiceMock,
                 },
-
                 {
                     provide: getRepositoryToken(User),
                     useValue: mockUserRepository,
@@ -31,28 +30,31 @@ describe('UserService', () => {
             ],
         }).compile();
 
-        service = module.get<UserService>(UserService);
+        service = module.get<UsersService>(UsersService);
     });
 
     beforeEach(() => {
         mockUserRepository.query.mockReset();
     });
 
-    describe('UserService methods', () => {
-        it('should must create a user with this mocked email', async () => {
-            mockUserRepository.query.mockResolvedValue([
-                UserServiceMock.giveAmeValidUser(),
-            ]);
-
+    describe('UsersService methods', () => {
+        it('should must create a user', async () => {
             const expectedResult = {
-                success: true,
-                user: UserServiceMock.giveAmeValidUser(),
+                name: 'Joel Kennedy',
+                email: 'pu@futri.et',
+                avatar: null,
+                id: '893ef2d8-344f-43c6-9a72-aeb378dc5a34',
+                created_at: '2022-09-19T01:22:36.316Z',
+                updated_at: '2022-09-19T01:22:36.316Z',
             };
             const result = await service.create({
-                ...UserServiceMock.giveAmeValidUser(),
+                name: 'Joel Kennedy',
+                email: 'pu@futri.et',
+                password: '123456',
             });
 
-            expect(result.email).toBe(expectedResult.user.email);
+            expect(result.name).toBe(expectedResult.name);
+            expect(result.email).toBe(expectedResult.email);
         });
     });
 });

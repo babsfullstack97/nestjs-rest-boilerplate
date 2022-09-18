@@ -1,5 +1,10 @@
-import dotenv from 'dotenv';
+import { configService } from '../../config/application.config';
 
-dotenv.config();
+export const APP_AUTH_SECRET: string =
+    configService.getValue('APP_AUTH_SECRET');
+export const APP_AUTH_EXPIRES_IN: string = configService.getValue(
+    'APP_AUTH_EXPIRES_IN',
+    false,
+);
 
-export const APP_SECRET: string = process.env.APP_SECRET;
+export const PORT: string = configService.getValue('PORT');

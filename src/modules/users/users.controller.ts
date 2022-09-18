@@ -9,19 +9,19 @@ import {
 } from '@nestjs/common';
 import { ApiHeader } from '@nestjs/swagger';
 
-import { UserService } from './user.service';
+import { UsersService } from './services/users.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserSessionsDto } from './dto/user-sessions.dto';
-import { UserListDataDto } from './dto/user-list-data';
+import { UserListDataDto } from './dto/users-list-data';
 
 @ApiHeader({
     name: 'x-api-key',
     description: 'API-Key for access',
 })
-@Controller('user')
-export class UserController {
-    constructor(private readonly userService: UserService) {}
+@Controller('users')
+export class UsersController {
+    constructor(private readonly userService: UsersService) {}
 
     @Get('list')
     @HttpCode(200)

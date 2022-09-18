@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { IsEmail } from 'class-validator';
-import { chance } from '../../../../test/mock/chance';
+import { chance } from '../../../shared/mocks/chance';
 
 export class CreateUserDto {
     @ApiProperty({ required: true, default: chance.name() })

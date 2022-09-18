@@ -8,7 +8,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
-@Entity({ name: 'user' })
+@Entity({ name: 'users' })
 export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -27,10 +27,10 @@ export class User {
     @Exclude()
     @IsString()
     @IsNotEmpty()
-    password: string;
+    password!: string;
 
     @Column({ nullable: true })
-    avatar: string;
+    avatar?: string;
 
     @CreateDateColumn()
     created_at: Date;
