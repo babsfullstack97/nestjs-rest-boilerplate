@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
 export class ConfigService {
-    constructor(private env: { [k: string]: string | undefined }) {}
+    constructor(private env: { [k: string]: string | undefined }) { }
 
     public getValue(key: string, throwOnMissing = true): string {
         const value = this.env[key];
-        if (!value && throwOnMissing && value !== 'test') {
+        if (!value && throwOnMissing && this.isTesting()) {
             throw new Error(`config error - missing env.${key}`);
         }
 
@@ -27,7 +27,10 @@ export class ConfigService {
     }
 
     public isProduction(): boolean {
-        return this.getBoolean('NODE_ENV');
+        return this.getValue('NODE_ENV') === 'production';
+    }
+    public isTesting(): boolean {
+        return this.getValue('NODE_ENV') === 'testing';
     }
 }
 export const configService: ConfigService = new ConfigService(process.env);
