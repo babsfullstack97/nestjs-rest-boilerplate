@@ -5,7 +5,7 @@ export class ConfigService {
 
     public getValue(key: string, throwOnMissing = true): string {
         const value = this.env[key];
-        if (!value && throwOnMissing) {
+        if (!value && throwOnMissing && value !== 'test') {
             throw new Error(`config error - missing env.${key}`);
         }
 
