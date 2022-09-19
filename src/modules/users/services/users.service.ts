@@ -49,7 +49,11 @@ export class UsersService {
         return await this.userRepository.find();
     }
     public async findOne(id: string): Promise<UserInterface> {
-        return await this.userRepository.findOne(id);
+        return await this.userRepository.findOne({
+            where: {
+                id,
+            }
+        });
     }
     public async auth(
         userSessionsDto: UserSessionsDto,
