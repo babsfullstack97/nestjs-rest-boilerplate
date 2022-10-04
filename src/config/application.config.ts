@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 export class ConfigService {
-    constructor(private env: { [k: string]: string | undefined }) { }
+    constructor(private env: { [k: string]: string | undefined }) {}
 
     public getValue(key: string, throwOnMissing = true): string {
         const value = this.env[key];

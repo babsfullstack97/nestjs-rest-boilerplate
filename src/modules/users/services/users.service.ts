@@ -52,7 +52,7 @@ export class UsersService {
         return await this.userRepository.findOne({
             where: {
                 id,
-            }
+            },
         });
     }
     public async auth(
